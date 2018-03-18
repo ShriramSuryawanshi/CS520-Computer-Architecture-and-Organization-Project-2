@@ -294,7 +294,7 @@ public class AllMyStages {
                             
                         case "STORE":
                             ins.getOper0().setValue(regfile[ins.getOper0().getRegisterNumber()]);       //shree - assigning the register value (only for store case)
-                            globals.register_invalid[ins.getOper0().getRegisterNumber()] = true;
+//                            globals.register_invalid[ins.getOper0().getRegisterNumber()] = true;
 
                             if(ins.getSrc1().isRegister()) 
                                 ins.getSrc1().setValue(regfile[ins.getSrc1().getRegisterNumber()]);                                                            
