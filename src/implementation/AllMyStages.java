@@ -178,6 +178,7 @@ public class AllMyStages {
             
             // VVVVV LOOK AT THIS VVVVV
             ins = ins.duplicate();
+            if (ins.isNull()) return;
          
             // ^^^^^ LOOK AT THIS ^^^^^
            
@@ -187,7 +188,7 @@ public class AllMyStages {
             // By cloning the instruction, you can alter it however you want, and if this stage is stalled, the duplicate gets thrown away without affecting the original.  This helps with idempotency.
             
             // These null instruction checks are mostly just to speed up the simulation.  The Void types were created so that null checks can be almost completely avoided.           
-            if (ins.isNull()) return;
+            
             
           //System.out.println("Decode : " + ins.toString());
             
@@ -262,11 +263,9 @@ public class AllMyStages {
                             ins.getOper0().setValue(ins.getOper0().getRegisterNumber());
                             globals.register_invalid[ins.getOper0().getRegisterNumber()] = true;
 
-                            if(ins.getSrc1().isRegister()) {
+                            if(ins.getSrc1().isRegister())
                                 ins.getSrc1().setValue(regfile[ins.getSrc1().getRegisterNumber()]);
-                                globals.register_invalid[ins.getSrc1().getRegisterNumber()] = true;
-                            }
-                            else 
+                           else 
                                ins.getSrc1().setValue(ins.getSrc1().getValue());
 
                             ins.getSrc2().setValue(0);
@@ -280,17 +279,13 @@ public class AllMyStages {
                             ins.getOper0().setValue(ins.getOper0().getRegisterNumber());
                             globals.register_invalid[ins.getOper0().getRegisterNumber()] = true;
 
-                            if(ins.getSrc1().isRegister()) {
-                                ins.getSrc1().setValue(regfile[ins.getSrc1().getRegisterNumber()]);
-                                globals.register_invalid[ins.getSrc1().getRegisterNumber()] = true;
-                            }
+                            if(ins.getSrc1().isRegister()) 
+                                ins.getSrc1().setValue(regfile[ins.getSrc1().getRegisterNumber()]);                       
                             else 
                                ins.getSrc1().setValue(ins.getSrc1().getValue());
 
-                            if(ins.getSrc2().isRegister()) {
-                                ins.getSrc2().setValue(regfile[ins.getSrc2().getRegisterNumber()]);
-                                globals.register_invalid[ins.getSrc2().getRegisterNumber()] = true;
-                            }
+                            if(ins.getSrc2().isRegister())
+                                ins.getSrc2().setValue(regfile[ins.getSrc2().getRegisterNumber()]);                                
                             else 
                                ins.getSrc2().setValue(ins.getSrc2().getValue());
 
@@ -301,17 +296,13 @@ public class AllMyStages {
                             ins.getOper0().setValue(regfile[ins.getOper0().getRegisterNumber()]);       //shree - assigning the register value (only for store case)
                             globals.register_invalid[ins.getOper0().getRegisterNumber()] = true;
 
-                            if(ins.getSrc1().isRegister()) {
-                                ins.getSrc1().setValue(regfile[ins.getSrc1().getRegisterNumber()]);
-                                globals.register_invalid[ins.getSrc1().getRegisterNumber()] = true;
-                            }
+                            if(ins.getSrc1().isRegister()) 
+                                ins.getSrc1().setValue(regfile[ins.getSrc1().getRegisterNumber()]);                                                            
                             else 
                                ins.getSrc1().setValue(ins.getSrc1().getValue());
 
-                            if(ins.getSrc2().isRegister()) {
+                            if(ins.getSrc2().isRegister()) 
                                 ins.getSrc2().setValue(regfile[ins.getSrc2().getRegisterNumber()]);
-                                globals.register_invalid[ins.getSrc2().getRegisterNumber()] = true;
-                            }
                             else 
                                ins.getSrc2().setValue(ins.getSrc2().getValue());
 
@@ -331,7 +322,6 @@ public class AllMyStages {
 
                         case "BRA":
                             int temp;
-                         //   System.out.println("\nBranch : " + ins.toString());
                             
                             if(ins.getOper0().isRegister())
                                 temp = regfile[ins.getOper0().getRegisterNumber()];
@@ -341,12 +331,10 @@ public class AllMyStages {
                             switch(ins.getComparison().toString()){
                             
                                 case "LT":
-                                    if (temp < 0) {
-                                      //  System.out.println("LT passed" + temp);
+                                    if (temp < 0) {                       
                                         globals.program_counter = ins.getLabelTarget().getAddress();
                                         globals.branch = 1;
                                     }
-//                                    else {System.out.println("LT failed" + temp); }
                                     
                                     op = EnumOpcode.NULL;
                                     ins.setOpcode(op);                                    
@@ -354,11 +342,9 @@ public class AllMyStages {
                                     
                                 case "EQ":
                                     if (temp == 0) {
-                                        //System.out.println("EQ passed" + temp);
                                         globals.program_counter = ins.getLabelTarget().getAddress();
                                         globals.branch = 1;
                                     }         
-//                                    else {//System.out.println("EQ failed" + temp);}
                                     
                                     op = EnumOpcode.NULL;
                                     ins.setOpcode(op);                                 
@@ -366,11 +352,9 @@ public class AllMyStages {
                                     
                                 case "GE":
                                     if (temp > 0) {
-                                        //System.out.println("GE passed" + temp);
                                         globals.program_counter = ins.getLabelTarget().getAddress();
                                         globals.branch = 1;
                                     }           
-//                                    else { //System.out.println("GE failed" + temp); }
 
                                     op = EnumOpcode.NULL;
                                     ins.setOpcode(op);
@@ -380,10 +364,7 @@ public class AllMyStages {
                             break;
 
 
-                        case "JMP":
-                            
-                           // System.out.println("\nJMP : " +ins.toString());
-                            
+                        case "JMP":                           
                             globals.program_counter = ins.getLabelTarget().getAddress();
                             
                              op = EnumOpcode.NULL;
@@ -418,10 +399,7 @@ public class AllMyStages {
         
         @Override
         public void compute(DecodeToExecute input, ExecuteToMemory output) {
-            InstructionBase ins = input.getInstruction();
-            
-            //shree - duplicating ins to avoid messing up original
-            ins = ins.duplicate();               
+            InstructionBase ins = input.getInstruction();        
             
             if (ins.isNull()) return;
             //System.out.println("Execute : " + ins.toString());
@@ -475,10 +453,10 @@ public class AllMyStages {
                 globals.register_invalid[ins.getOper0().getRegisterNumber()] = false;
             }
                 
+                                          
+            // Fill output with what passes to Memory stage...
             //shree - updating result
             output.result = result;
-                                            
-            // Fill output with what passes to Memory stage...
             
             output.setInstruction(ins);
             // Set other data that's passed to the next stage.
@@ -501,8 +479,7 @@ public class AllMyStages {
             
             GlobalData globals = (GlobalData)core.getGlobalResources();
             
-          
-           
+
             //shree - Updating DFG sheet
 //            File file = new File("DebugSheet_Base.xls");
             
@@ -543,27 +520,19 @@ public class AllMyStages {
             switch(ins.getOpcode().toString()) {
                 
                 case "LOAD":
-                  //System.out.print(ins.toString());
-                    
                     output.result = globals.memory_file[input.result];                                                 
                     break;
                     
+                    
                 case "STORE":
-                  //System.out.print(ins.toString());
-                    globals.memory_file[input.result] = ins.getOper0().getValue();              //shree - using reg vaue stored in Oper0 (STORE special case)
-                   // System.out.print(" - Stored " + globals.register_file[ins.getOper0().getValue()] + " in memory R" +input.result + "\n");
+                    globals.memory_file[input.result] = ins.getOper0().getValue();              //shree - using reg value stored in Oper0 (STORE special case)
                     EnumOpcode op1 = EnumOpcode.NULL;
                     ins.setOpcode(op1);
                     
+                    // System.out.print(" - Stored " + globals.register_file[ins.getOper0().getValue()] + " in memory R" +input.result + "\n");
+                    
                     //shree - update invalid flags
-                    globals.register_invalid[ins.getOper0().getRegisterNumber()] = false;
-
-                    if(ins.getSrc1().isRegister())
-                        globals.register_invalid[ins.getSrc1().getRegisterNumber()] = false;
-
-                    if(ins.getSrc2().isRegister())
-                        globals.register_invalid[ins.getSrc2().getRegisterNumber()] = false;
-            
+                    globals.register_invalid[ins.getOper0().getRegisterNumber()] = false;           
                     break;
                     
             }
@@ -591,8 +560,7 @@ public class AllMyStages {
             
               if (input.getInstruction().getOpcode() == EnumOpcode.HALT) {
                 // Stop the simulation
-                //System.out.println("Halting.....");
-                System.out.println("Total Clocks : " + globals.ClockValue);
+                System.out.println("Halting...Total Clocks : " + globals.ClockValue);
                 System.exit(0);
               }
             
@@ -630,56 +598,16 @@ public class AllMyStages {
 //                    System.out.println("Excel Error!" + e);
 //                }
 //            }
+                       
             
             // Write back result to register file
             globals.register_file[ins.getOper0().getValue()] = input.result;
             
-            //shree - Updatinf DFG sheet for Register Values written
-//            file = new File("DebugSheet_Base.xls");
-            
-//            if(!file.exists()) 
-//                System.out.println("Issue in Excel file");
-//            else  {
-//                try {
-//                    Workbook wb = Workbook.getWorkbook(file);
-//                    WritableWorkbook wbt = Workbook.createWorkbook(new File("DebugSheet_New.xls"), wb);
-//                    
-//                    WritableSheet ws = wbt.getSheet(1);
-//                    
-//                    WritableCell cell;
-//                 
-//                    Label l = new Label(ins.getOper0().getValue()+1, clock+1, Integer.toString(input.result));
-//                    cell = (WritableCell) l;
-//                    ws.addCell(cell);
-//                    
-//                    wbt.write();
-//                    wbt.close();
-//                    wb.close();
-//                                                      
-//                    file.delete();
-//                    File file1 = new File("DebugSheet_New.xls");
-//                    file1.renameTo(file);
-//                }
-//                catch(IOException | IndexOutOfBoundsException | BiffException | WriteException e) {
-//                    System.out.println("Excel Error!" + e);
-//                }
-//            }
-            
-            
             //shree - update invalid flags
-            //System.out.print(ins.toString());
             globals.register_invalid[ins.getOper0().getRegisterNumber()] = false;
+
             
-            if(ins.getSrc1().isRegister())
-                globals.register_invalid[ins.getSrc1().getRegisterNumber()] = false;
-            
-            if(ins.getSrc2().isRegister())
-                globals.register_invalid[ins.getSrc2().getRegisterNumber()] = false;
-            
-            
-            //System.out.print(" - Stored " + input.result + " in R" + ins.getOper0().getRegisterNumber() + "\n");
-//            System.out.println();
-          
+            //System.out.print(" - Stored " + input.result + " in R" + ins.getOper0().getRegisterNumber() + "\n");         
           
             }
         }
