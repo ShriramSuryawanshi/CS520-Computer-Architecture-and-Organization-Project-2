@@ -15,14 +15,14 @@ import utilitytypes.EnumOpcode;
  * @author 
  */
 public class MyALU {
-    static int execute(EnumOpcode opcode, int input1, int input2, int oper0) {
+    static int execute(EnumOpcode opcode, int input1, int input2, int oper0, int clock) {
         int result = 0;
         
         // Implement code here that performs appropriate computations for any instruction that requires an ALU operation.  See EnumOpcode.
         
         //shree - performing ALU operations
         
-//        System.out.println("ALU Operation : OPCODE - " + opcode.toString() + ", SRC1 - " + input1 + ", SRC2 -" + input2 + ", DEST : " + oper0);
+    //   System.out.println("ALU Operation at clock " + clock + ", OPCODE - " + opcode.toString() + ", SRC1 - " + input1 + ", SRC2 -" + input2 + ", DEST : " + oper0);
         
         switch(opcode.toString()) {
             

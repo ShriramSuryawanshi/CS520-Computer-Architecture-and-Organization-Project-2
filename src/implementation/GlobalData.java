@@ -5,6 +5,7 @@
  */
 package implementation;
 
+import baseclasses.InstructionBase;
 import utilitytypes.IGlobals;
 import tools.InstructionSequence;
 
@@ -36,7 +37,9 @@ public class GlobalData implements IGlobals {
    //shree - my variables
     public int ClockValue = 0;
     public int[] memory_file = new int[1000];
+    public int[] reg_invalid_cnt = new int[32];
     public int branch = 0;
-    public int[] Forward = new int[3];
+    public InstructionBase[] Forward = new InstructionBase[3];
+    public int[] result = new int[3];
     
 }

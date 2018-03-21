@@ -39,6 +39,10 @@ public class AllMyLatches {
         // LatchBase already includes a field for the instruction.
         // What else do you need here?
         
+        //shree - forwarding data
+        public int Forward_To;
+        public int Forwarded_Operand;
+        
     }
     
     public static class ExecuteToMemory extends LatchBase {

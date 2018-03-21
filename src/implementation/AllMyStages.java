@@ -155,6 +155,7 @@ public class AllMyStages {
         
         boolean stall = false;    
         
+        
         @Override
         public boolean stageWaitingOnResource() {
             // Hint:  You will need to implement this to deal with 
@@ -168,6 +169,9 @@ public class AllMyStages {
         @Override
         public void compute(FetchToDecode input, DecodeToExecute output) {
             InstructionBase ins = input.getInstruction();
+            
+            output.Forward_To = 0;
+            output.Forwarded_Operand = 0;
             
             GlobalData globals = (GlobalData)core.getGlobalResources();
             int[] regfile = globals.register_file;
@@ -237,23 +241,66 @@ public class AllMyStages {
             // - Resolve branches 
             
             //shree - checking for stall condition
-            if(ins.getOper0().isRegister()) {
-                if(globals.register_invalid[ins.getOper0().getRegisterNumber()])
-                    stall = true;                   
-                else
-                    stall = false;
-            }
+        
    
-            if(!stall && ins.getSrc1().isRegister()) {
-                if(globals.register_invalid[ins.getSrc1().getRegisterNumber()]) 
+            if(clock ==7)
+            {
+                System.out.println("");
+            }
+            
+            if(ins.getSrc1().isRegister()) {
+                if(globals.register_invalid[ins.getSrc1().getRegisterNumber()]) {
                     stall = true;               
+                    
+                    //shree - check forwarding
+//                    if(ins.getSrc1().getRegisterNumber() == globals.Forward[0].getOper0().getRegisterNumber()) {
+//                          output.Forward_To = 2;
+//                          output.Forwarded_Operand = 1;
+//                          stall = false;
+//                    }
+//                    else if(ins.getSrc1().getRegisterNumber() == globals.Forward[1].getOper0().getRegisterNumber()) {
+//                          output.Forward_To = 3;
+//                          output.Forwarded_Operand = 1;
+//                          stall = false;
+//                    }
+//                    else if(ins.getSrc1().getRegisterNumber() == globals.Forward[2].getOper0().getRegisterNumber()) {
+//                          output.Forward_To = 4;
+//                          output.Forwarded_Operand = 1;
+//                          stall = false;
+//                    }
+                }
                 else
                     stall = false;
             }
             
             if(!stall && ins.getSrc2().isRegister()) {
-                if(globals.register_invalid[ins.getSrc2().getRegisterNumber()]) 
+                if(globals.register_invalid[ins.getSrc2().getRegisterNumber()]) {
                     stall = true;
+                    
+//                    if(ins.getSrc2().getRegisterNumber() == globals.Forward[0].getOper0().getRegisterNumber()) {
+//                          output.Forward_To = 2;
+//                          output.Forwarded_Operand = 2;
+//                          stall = false;
+//                    }
+//                    else if(ins.getSrc2().getRegisterNumber() == globals.Forward[1].getOper0().getRegisterNumber()) {
+//                          output.Forward_To = 3;
+//                          output.Forwarded_Operand = 2;
+//                          stall = false;
+//                    }
+//                    else if(ins.getSrc2().getRegisterNumber() == globals.Forward[2].getOper0().getRegisterNumber()) {
+//                          output.Forward_To = 4;
+//                          output.Forwarded_Operand = 2;
+//                          stall = false;
+//                    }
+                }                    
+                else 
+                    stall = false;
+            }
+            
+                if(ins.getOpcode().toString().equals("BRA") && ins.getOper0().isRegister()) {
+                    if(globals.register_invalid[ins.getOper0().getRegisterNumber()]) {
+                        stall = true;                                      
+                    }
                 else
                     stall = false;
             }
@@ -308,7 +355,7 @@ public class AllMyStages {
                             
                         case "STORE":
                             ins.getOper0().setValue(regfile[ins.getOper0().getRegisterNumber()]);       //shree - assigning the register value (only for store case)
-                            globals.register_invalid[ins.getOper0().getRegisterNumber()] = true;
+                           // globals.register_invalid[ins.getOper0().getRegisterNumber()] = true;
 
                             if(ins.getSrc1().isRegister()) 
                                 ins.getSrc1().setValue(regfile[ins.getSrc1().getRegisterNumber()]);                                                            
@@ -393,7 +440,7 @@ public class AllMyStages {
 
                     }        
 
-                    globals.Forward[0] = ins.getOper0().getRegisterNumber();
+                    globals.Forward[0] = ins;
                     output.setInstruction(ins);
             }
             else
@@ -452,15 +499,28 @@ public class AllMyStages {
 //                    System.out.println("Excel Error!" + e);
 //                    } 
 //            }
+//            
             
-                  
-            int source1 = ins.getSrc1().getValue();
-            int source2 = ins.getSrc2().getValue();
-            int oper0 =   ins.getOper0().getValue();
+            int source1 = 0;
+            int source2 = 0;
+            int oper0 = 0;
+               
+
+            if(input.Forward_To == 2) {
+                if(input.Forwarded_Operand == 1)
+                    source1 = globals.result[0];
+                if(input.Forwarded_Operand == 2)
+                    source2 = globals.result[0];
+            }
+            else {
+                  source1 = ins.getSrc1().getValue();
+                  source2 = ins.getSrc2().getValue();
+                  oper0 =   ins.getOper0().getValue();
+            }
             int result = 0;
                       
             if(!ins.getOpcode().toString().equalsIgnoreCase("HALT"))                        //shree - skip ALU if HALT
-                result = MyALU.execute(ins.getOpcode(), source1, source2, oper0);
+                result = MyALU.execute(ins.getOpcode(), source1, source2, oper0, globals.ClockValue-1);
             
             if(ins.getOpcode().toString().equalsIgnoreCase("OUT")){                         //shree - OUT set to NULL
                 EnumOpcode op = EnumOpcode.NULL;
@@ -472,7 +532,8 @@ public class AllMyStages {
                                           
             // Fill output with what passes to Memory stage...
             //shree - updating result
-            globals.Forward[1] = ins.getOper0().getRegisterNumber();
+            globals.Forward[1] = ins;
+            globals.result[0] = result;
             output.result = result;
             
             output.setInstruction(ins);
@@ -549,15 +610,12 @@ public class AllMyStages {
                     EnumOpcode op1 = EnumOpcode.NULL;
                     ins.setOpcode(op1);
                     
-                    // System.out.print(" - Stored " + globals.register_file[ins.getOper0().getValue()] + " in memory R" +input.result + "\n");
-                    
-                    //shree - update invalid flags
-                    globals.register_invalid[ins.getOper0().getRegisterNumber()] = false;           
+//                    System.out.print(" - Stored " + globals.register_file[ins.getOper0().getValue()] + " in memory R" +input.result + "\n");
                     break;
                     
             }
  
-            globals.Forward[2] = ins.getOper0().getRegisterNumber();
+           globals.Forward[2] = ins;
             output.setInstruction(ins);
             // Set other data that's passed to the next stage.
         }
@@ -577,7 +635,6 @@ public class AllMyStages {
             InstructionBase ins = input.getInstruction();
             if (ins.isNull()) return;
             
-         //   System.out.print("\t\t\t\t\t" + ins.toString());
              GlobalData globals = (GlobalData)core.getGlobalResources();
             
               if (input.getInstruction().getOpcode() == EnumOpcode.HALT) {
@@ -586,10 +643,6 @@ public class AllMyStages {
                 System.exit(0);
               }
             
-           
-                        
-            //System.out.println("\nWriteBack : " + input.getInstruction().toString());
-
            //shree - Updating DFG sheet
 //           File file = new File("DebugSheet_Base.xls");
 //            
@@ -628,9 +681,8 @@ public class AllMyStages {
             
             //shree - update invalid flags
             globals.register_invalid[ins.getOper0().getRegisterNumber()] = false;
-
             
-            //System.out.print(" - Stored " + input.result + " in R" + ins.getOper0().getRegisterNumber() + "\n");         
+      //      System.out.print(" - Stored " + input.result + " in R" + ins.getOper0().getRegisterNumber() + "\n");         
           
             }
         }
