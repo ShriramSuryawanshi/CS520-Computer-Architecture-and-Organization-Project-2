@@ -34,9 +34,9 @@ public class GlobalData implements IGlobals {
     // Other global and shared variables here....
 
    //shree - my variables
-
     public int ClockValue = 0;
     public int[] memory_file = new int[1000];
     public int branch = 0;
+    public int[] Forward = new int[3];
     
 }

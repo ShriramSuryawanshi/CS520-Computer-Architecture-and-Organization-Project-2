@@ -10,6 +10,7 @@ import baseclasses.PipelineStageBase;
 import baseclasses.CpuCore;
 import tools.InstructionSequence;
 import voidtypes.VoidRegister;
+import baseclasses.LatchBase;
 
 //shree - Excel libraries
 import java.io.File;
@@ -64,6 +65,11 @@ public class MyCpuCore extends CpuCore<GlobalData> {
         globals = new GlobalData();
     }
     
+    public AllMyStages.Execute getPipe(){
+        //System.out.println(registers.get(2).read());
+        return(Execute);
+    }
+        
     public MyCpuCore() throws Exception {
         setup();
     }
@@ -77,7 +83,7 @@ public class MyCpuCore extends CpuCore<GlobalData> {
         
         //shree - ruuning clock cycles until HALT   
         int i = 0;
-        while( true ) {            
+        while( i<30 ) {            
             advanceClock();
              i++;   
         }

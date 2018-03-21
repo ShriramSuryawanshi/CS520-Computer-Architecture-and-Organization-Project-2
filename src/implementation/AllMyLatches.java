@@ -12,6 +12,10 @@ import utilitytypes.EnumOpcode;
 //shree - importing operand
 import utilitytypes.Operand;
 
+import implementation.MyCpuCore;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Definitions of latch contents for pipeline registers.  Pipeline registers
  * create instances of these for passing data between pipeline stages.
@@ -25,9 +29,7 @@ import utilitytypes.Operand;
  * @author 
  */
 public class AllMyLatches {
-    
-    
-      
+          
     public static class FetchToDecode extends LatchBase {
         // LatchBase already includes a field for the instruction.
  
@@ -36,7 +38,7 @@ public class AllMyLatches {
     public static class DecodeToExecute extends LatchBase {
         // LatchBase already includes a field for the instruction.
         // What else do you need here?
-        public String Original_ins;
+        
     }
     
     public static class ExecuteToMemory extends LatchBase {
