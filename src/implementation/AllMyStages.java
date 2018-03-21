@@ -259,7 +259,9 @@ public class AllMyStages {
             }
             
             
-           // System.out.println("Decode, clock cycle : "+ globals.ClockValue + " Reg No at index 1 : "+core.getForwardingDestinationRegisterNumber(1));
+//           System.out.println("\nDecode, clock cycle : "+ clock + "- Reg at 1 (D2E) : "+core.getForwardingDestinationRegisterNumber(1) + ", Reg at 2 (E2M) : " + core.getForwardingDestinationRegisterNumber(2)+ ", Reg at 3 (M2W) : "+core.getForwardingDestinationRegisterNumber(3));
+//           System.out.println("Decode, clock cycle : "+ clock + "- Result at 1 (D2E) : "+core.isForwardingResultValidNextCycle(1) + ", Result at 2 (E2M) : " + core.isForwardingResultValidNextCycle(2)+ ", Result at 3 (M2W) : "+core.isForwardingResultValidNextCycle(3));
+//           System.out.println("Decode, clock cycle : "+ clock + "- Value at 1 (D2E) : "+core.getForwardingResultValue(1) + ", Value at 2 (E2M) : " + core.getForwardingResultValue(2)+ ", Value at 3 (M2W) : "+core.getForwardingResultValue(3));
             
   
          
@@ -306,7 +308,7 @@ public class AllMyStages {
                             
                         case "STORE":
                             ins.getOper0().setValue(regfile[ins.getOper0().getRegisterNumber()]);       //shree - assigning the register value (only for store case)
-//                            globals.register_invalid[ins.getOper0().getRegisterNumber()] = true;
+                            globals.register_invalid[ins.getOper0().getRegisterNumber()] = true;
 
                             if(ins.getSrc1().isRegister()) 
                                 ins.getSrc1().setValue(regfile[ins.getSrc1().getRegisterNumber()]);                                                            

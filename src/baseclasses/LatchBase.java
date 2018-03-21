@@ -95,7 +95,10 @@ public class LatchBase {
      * @return Validity of result.
      */
     public boolean isForwardingResultValidNextCycle() {
-        return false;
+        if(ins.getOpcode().toString().equals("LOAD"))
+           return false;
+        else
+            return true;
     }
 
     
