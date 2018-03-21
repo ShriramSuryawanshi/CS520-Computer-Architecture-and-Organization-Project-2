@@ -44,6 +44,7 @@ public class AllMyStages {
     //shree - to udate DFG Excel as per clock cycle
     public static int clock = 0;    
     public static int bra_cnt = 0;
+    public static int load_cnt = 0;
    
     /*** Fetch Stage ***/
     static class Fetch extends PipelineStageBase<VoidLatch,FetchToDecode> {
@@ -115,7 +116,7 @@ public class AllMyStages {
             // between stages.
             
             // Your code goes here...
-            //System.out.println("\n" + (globals.ClockValue-1) + " : F - " + ins.toString());
+          //  System.out.print("\n" + (globals.ClockValue-1) + " : F - " + ins.toString());
             output.setInstruction(ins);
             
         }
@@ -165,6 +166,8 @@ public class AllMyStages {
         @Override
         public void compute(FetchToDecode input, DecodeToExecute output) {
             InstructionBase ins = input.getInstruction();
+            
+            //System.out.print("\t\t\t\t D : " +ins.toString());
             
             output.Forward_To = 0;
             output.Forwarded_Operand = 0;
@@ -219,7 +222,8 @@ public class AllMyStages {
 
            
 //
-                      
+
+                   
             //shree - checking for stall condition           
             if(ins.getSrc1().isRegister()) {
                 if(globals.register_invalid[ins.getSrc1().getRegisterNumber()]) {
@@ -228,21 +232,28 @@ public class AllMyStages {
                     //shree - check forwarding
                     if(ins.getSrc1().getRegisterNumber() == globals.Forward[0].getOper0().getRegisterNumber()) {
                         
-                        if(!globals.Forward[0].getOpcode().toString().equals("LOAD")) {
+                        if(globals.Forward[0].getOpcode().toString().equals("LOAD")) {                                  //shree - stalling load for one cycle if execute has load
+                            load_cnt++;
+                            
+                            if(load_cnt == 2)
+                            {
+                                 output.Forward_To = 3;
+                                 output.Forwarded_Operand = 1;
+                                 stall = false;
+                                 load_cnt = 0;
+                            }
+                        }
+                        else {                        
                           output.Forward_To = 2;
                           output.Forwarded_Operand = 1;
                           stall = false;
-                        }
+                        }            
+                      }
                         
-                    }
-                    else if(ins.getSrc1().getRegisterNumber() == globals.Forward[1].getOper0().getRegisterNumber()) {
-                        
-                         if(!globals.Forward[0].getOpcode().toString().equals("LOAD")) {
+                    else if(ins.getSrc1().getRegisterNumber() == globals.Forward[1].getOper0().getRegisterNumber()) {                        
                             output.Forward_To = 3;
                             output.Forwarded_Operand = 1;
                             stall = false;
-                        }
-
                     }
                     else if(ins.getSrc1().getRegisterNumber() == globals.Forward[2].getOper0().getRegisterNumber()) {
                           output.Forward_To = 4;
@@ -263,20 +274,27 @@ public class AllMyStages {
                     //shree - check forwarding
                     if(ins.getSrc2().getRegisterNumber() == globals.Forward[0].getOper0().getRegisterNumber()) {
                         
-                        if(!globals.Forward[0].getOpcode().toString().equals("LOAD")) {
-                          output.Forward_To = 2;
-                          output.Forwarded_Operand = 1;
-                          stall = false;
+                         if(globals.Forward[0].getOpcode().toString().equals("LOAD")) {                                  //shree - stalling load for one cycle if execute has load
+                            load_cnt++;
+                            
+                            if(load_cnt == 2)
+                            {
+                                 output.Forward_To = 3;
+                                 output.Forwarded_Operand = 2;
+                                 stall = false;
+                                 load_cnt = 0;
+                            }
                         }
-                        
+                        else {                        
+                          output.Forward_To = 2;
+                          output.Forwarded_Operand = 2;
+                          stall = false;
+                         }   
                     }
-                    else if(ins.getSrc2().getRegisterNumber() == globals.Forward[1].getOper0().getRegisterNumber()) {
-                        
-                        if(!globals.Forward[0].getOpcode().toString().equals("LOAD")) {
+                    else if(ins.getSrc2().getRegisterNumber() == globals.Forward[1].getOper0().getRegisterNumber()) {                        
                             output.Forward_To = 3;
-                            output.Forwarded_Operand = 1;
+                            output.Forwarded_Operand = 2;
                             stall = false;
-                       }
                     }
                     else if(ins.getSrc2().getRegisterNumber() == globals.Forward[2].getOper0().getRegisterNumber()) {
                           output.Forward_To = 4;
@@ -288,7 +306,7 @@ public class AllMyStages {
                     stall = false;
             }
             
-            //shree - creating a stall for branch
+            //shree - creating a stall & forward for branch
              if(ins.getOpcode().toString().equals("BRA") && ins.getOper0().isRegister()) {
                     if(globals.register_invalid[ins.getOper0().getRegisterNumber()]) {
                         stall = true;
@@ -307,7 +325,7 @@ public class AllMyStages {
             }
             
              
-            //shree - creating a stall for OUT
+            //shree - creating a stall & forward for OUT
              if(ins.getOpcode().toString().equals("OUT") && ins.getOper0().isRegister()) {
                     if(globals.register_invalid[ins.getOper0().getRegisterNumber()]) {
                         stall = true;           
@@ -496,7 +514,7 @@ public class AllMyStages {
             if (ins.isNull()) return;
             
             GlobalData globals = (GlobalData)core.getGlobalResources();
-          //  System.out.println(globals.ClockValue-1 + " : E - " + ins.toString());
+         // System.out.print("\t\t\t E : " +ins.toString());
             
              //shree - Updating DFG sheet
 //            File file = new File("DebugSheet_Base.xls");         
@@ -600,7 +618,7 @@ public class AllMyStages {
             if (ins.isNull()) return;
            
             GlobalData globals = (GlobalData)core.getGlobalResources();
-        //    System.out.println(globals.ClockValue-1 + " : M - " + ins.toString());
+      //  System.out.print("\t\t\t M : " +ins.toString());
             
 
 //            //shree - Updating DFG sheet
@@ -652,8 +670,7 @@ public class AllMyStages {
                     //System.out.print(globals.ClockValue-1 + "- MM : " + ins.toString() + " - Stored " + ins.getOper0().getValue() + " in memory R" +input.result + "\n");
                     EnumOpcode op1 = EnumOpcode.NULL;
                     ins.setOpcode(op1);
-                    
-                  
+      
                     break;
                     
             }
@@ -681,7 +698,7 @@ public class AllMyStages {
             if (ins.isNull()) return;
             
              GlobalData globals = (GlobalData)core.getGlobalResources();
-           //  System.out.println(globals.ClockValue-1 + " : W - " + ins.toString());
+           //System.out.print("\t\t\t W : " +ins.toString());
              
              globals.result[2] = input.result;
             
