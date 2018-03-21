@@ -103,6 +103,67 @@ public class PipelineRegister<LatchType extends LatchBase> {
         }
     }
     
+    
+    /**
+     * @return destination register number
+     */
+    public int getForwardingDestinationRegisterNumber() {
+        return slave.getForwardingDestinationRegisterNumber();
+    }
+    
+    
+    /**
+     * If this method is ever to return true, you must override the method
+     * of the same name in your subclass of LatchBase.
+     * 
+     * This method returns indication as to whether the value associated with
+     * the target register is valid. 
+     * - For DecodeToExecute, there is never a valid result.
+     * - For ExecuteToMemory, all instructions that will do writeback will
+     *   have a valid result *except LOAD*.
+     * - For MemoryToWriteback, all instruction that will write back will have
+     *   a valid result.
+     * 
+     * @return Validity of result.
+     */
+    public boolean isForwardingResultValid() {
+        return slave.isForwardingResultValid();
+    }    
+
+    
+    /**
+     * If this method is ever to return true, you must override the method
+     * of the same name in your subclass of LatchBase.
+     * 
+     * This method returns indication as to whether the value associated with
+     * the target register WILL BE VALID in the NEXT CYCLE in the
+     * NEXT PIPELINE REGISTER.
+     * - For DecodeToExecute, all instructions that will do a writeback
+     *   (except LOAD) will have a valid result in ExecuteToMemory on the
+     *   next cycle..
+     * - For ExecuteToMemory, all instructions that will do writeback will
+     *   have a valid result in MemoryToWriteback on the next cycle;
+     * - For MemoryToWriteback, results are written back to the register file,
+     *   so you can't perform any forwarding on the next cycle;
+     * 
+     * @return Validity of result.
+     */
+    public boolean isForwardingResultValidNextCycle() {
+        return slave.isForwardingResultValidNextCycle();
+    }
+    
+    
+    /**
+     * If this method is ever to return a value, you must override the
+     * method of the same name in your subclass of LatchBase.
+     * 
+     * @return Result value that will be written to target register.
+     */
+    public int getForwardingResultValue() {
+        return slave.getForwardingResultValue();
+    }
+    
+    
     /**
      * Get the class of the latch type that is being handled by this register.
      * This can be useful for debugging purposes.  For instance, you can print
@@ -112,6 +173,10 @@ public class PipelineRegister<LatchType extends LatchBase> {
      */
     public Class<LatchType> getLatchType() {
         return latchclass;
+    }
+    
+    public String getLatchTypeName() {
+        return getLatchType().getSimpleName();
     }
     
     public PipelineRegister(Class latchclass) throws Exception {

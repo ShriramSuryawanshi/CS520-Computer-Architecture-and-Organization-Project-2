@@ -10,12 +10,6 @@ import baseclasses.PipelineStageBase;
 import baseclasses.CpuCore;
 import tools.InstructionSequence;
 import voidtypes.VoidRegister;
-import baseclasses.LatchBase;
-
-//shree - Excel libraries
-import java.io.File;
-import java.awt.Desktop;
-import java.io.IOException;
 
 /**
  * This is an example of a class that builds a specific CPU simulator out of
@@ -65,11 +59,6 @@ public class MyCpuCore extends CpuCore<GlobalData> {
         globals = new GlobalData();
     }
     
-    public AllMyStages.Execute getPipe(){
-        //System.out.println(registers.get(2).read());
-        return(Execute);
-    }
-        
     public MyCpuCore() throws Exception {
         setup();
     }
@@ -80,23 +69,6 @@ public class MyCpuCore extends CpuCore<GlobalData> {
     
     public void runProgram() {
         // Call advanceClock() in a loop until an error occurs or the HALT
-        
-        //shree - ruuning clock cycles until HALT   
-        int i = 0;
-        while( i<30 ) {            
-            advanceClock();
-             i++;   
-        }
-        
-        
-       //shree - Open DFG Excel at the end
-//       Desktop desktop = Desktop.getDesktop();
-//       File file = new File("DebugSheet_Base.xls");
-//       try {
-//           if(file.exists()) desktop.open(file);
-//       }
-//       catch(IOException e) {}
-              
         // instruction is executed.
     }
 }
