@@ -71,42 +71,40 @@ public class AllMyStages {
            //shree - Updating DFG sheet
             clock = globals.ClockValue;
             
-            File file = new File("DebugSheet_Base.xls");
-            
-            if(!file.exists()) 
-                System.out.println("FC : Issue in Excel file");
-            else  {
-                try {
-                    Workbook wb = Workbook.getWorkbook(file);
-                    WritableWorkbook wbt = Workbook.createWorkbook(new File("DebugSheet_New.xls"), wb);
-                    
-                    WritableSheet ws = wbt.getSheet(0);
-                    
-                    WritableCell cell;
-                 
-                    Label l = new Label(1, clock+1, ins.toString());
-                    cell = (WritableCell) l;
-                    ws.addCell(cell);
-                    
-                    wbt.write();
-                    wbt.close();
-                    wb.close();
-                                                      
-                    file.delete();
-                    File file1 = new File("DebugSheet_New.xls");
-                    file1.renameTo(file);
-                    Thread.sleep(500);
-                }
-                catch(IOException | IndexOutOfBoundsException | BiffException | WriteException e) {
-                    System.out.println("Excel Error!" + e);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(AllMyStages.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+//            File file = new File("DebugSheet_Base.xls");
+//            
+//            if(!file.exists()) 
+//                System.out.println("FC : Issue in Excel file");
+//            else  {
+//                try {
+//                    Workbook wb = Workbook.getWorkbook(file);
+//                    WritableWorkbook wbt = Workbook.createWorkbook(new File("DebugSheet_New.xls"), wb);
+//                    
+//                    WritableSheet ws = wbt.getSheet(0);
+//                    
+//                    WritableCell cell;
+//                 
+//                    Label l = new Label(1, clock+1, ins.toString());
+//                    cell = (WritableCell) l;
+//                    ws.addCell(cell);
+//                    
+//                    wbt.write();
+//                    wbt.close();
+//                    wb.close();
+//                                                      
+//                    file.delete();
+//                    File file1 = new File("DebugSheet_New.xls");
+//                    file1.renameTo(file);
+//                   // Thread.sleep(500);
+//                }
+//                catch(IOException | IndexOutOfBoundsException | BiffException | WriteException e) {
+//                    System.out.println("Excel Error!" + e);        
+//                }
+//            }
             
             globals.ClockValue++;
             //System.out.println("\n"+globals.ClockValue);
-            //System.out.println("\nFetch : "+ins.toString());
+          //  System.out.print("\n"+ globals.ClockValue + " : " + ins.toString());
                 
             
             
@@ -186,6 +184,8 @@ public class AllMyStages {
             // VVVVV LOOK AT THIS VVVVV
             ins = ins.duplicate();
             if (ins.isNull()) return;
+            
+           // System.out.print("\t\t\t\t\t" + ins.toString());
          
             // ^^^^^ LOOK AT THIS ^^^^^
            
@@ -200,38 +200,36 @@ public class AllMyStages {
           //System.out.println("Decode : " + ins.toString());
             
             //shree - updating DFG sheet
-            File file = new File("DebugSheet_Base.xls");
-            
-            if(!file.exists()) 
-                System.out.println("DC : Issue in Excel file");
-            else  {
-                try {
-                    Workbook wb = Workbook.getWorkbook(file);
-                    WritableWorkbook wbt = Workbook.createWorkbook(new File("DebugSheet_New.xls"), wb);
-                    
-                    WritableSheet ws = wbt.getSheet(0);
-                    
-                    WritableCell cell;
-                 
-                    Label l = new Label(2, clock+1, ins.toString());
-                    cell = (WritableCell) l;
-                    ws.addCell(cell);
-                    
-                    wbt.write();
-                    wbt.close();
-                    wb.close();
-                                                      
-                    file.delete();
-                    File file1 = new File("DebugSheet_New.xls");
-                    file1.renameTo(file);
-                    Thread.sleep(500);
-                }
-                catch(IOException | IndexOutOfBoundsException | BiffException | WriteException e) {
-                    System.out.println("Excel Error!" + e);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(AllMyStages.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+//            File file = new File("DebugSheet_Base.xls");
+//            
+//            if(!file.exists()) 
+//                System.out.println("DC : Issue in Excel file");
+//            else  {
+//                try {
+//                    Workbook wb = Workbook.getWorkbook(file);
+//                    WritableWorkbook wbt = Workbook.createWorkbook(new File("DebugSheet_New.xls"), wb);
+//                    
+//                    WritableSheet ws = wbt.getSheet(0);
+//                    
+//                    WritableCell cell;
+//                 
+//                    Label l = new Label(2, clock+1, ins.toString());
+//                    cell = (WritableCell) l;
+//                    ws.addCell(cell);
+//                    
+//                    wbt.write();
+//                    wbt.close();
+//                    wb.close();
+//                                                      
+//                    file.delete();
+//                    File file1 = new File("DebugSheet_New.xls");
+//                    file1.renameTo(file);
+//                  //  Thread.sleep(500);
+//                }
+//                catch(IOException | IndexOutOfBoundsException | BiffException | WriteException e) {
+//                    System.out.println("Excel Error!" + e);
+//                } 
+//            }
             
             // Do what the decode stage does:
             // - Look up source operands
@@ -240,32 +238,28 @@ public class AllMyStages {
             
             //shree - checking for stall condition
             if(ins.getOper0().isRegister()) {
-                if(globals.register_invalid[ins.getOper0().getRegisterNumber()]) {}
-                    //stall = true;                   
+                if(globals.register_invalid[ins.getOper0().getRegisterNumber()])
+                    stall = true;                   
                 else
                     stall = false;
             }
    
             if(!stall && ins.getSrc1().isRegister()) {
-                if(globals.register_invalid[ins.getSrc1().getRegisterNumber()]) {
-                    stall = true;
-                    if(ins.getSrc1().getRegisterNumber() == globals.Forward[0] || ins.getSrc1().getRegisterNumber() == globals.Forward[1] || ins.getSrc1().getRegisterNumber() == globals.Forward[2])
-                        stall = false;
-                }
+                if(globals.register_invalid[ins.getSrc1().getRegisterNumber()]) 
+                    stall = true;               
                 else
                     stall = false;
             }
             
             if(!stall && ins.getSrc2().isRegister()) {
-                if(globals.register_invalid[ins.getSrc2().getRegisterNumber()]) {
+                if(globals.register_invalid[ins.getSrc2().getRegisterNumber()]) 
                     stall = true;
-                    if(ins.getSrc2().getRegisterNumber() == globals.Forward[0] || ins.getSrc2().getRegisterNumber() == globals.Forward[1] || ins.getSrc2().getRegisterNumber() == globals.Forward[2])
-                        stall = false;
-                }
                 else
                     stall = false;
             }
             
+            
+           // System.out.println("Decode, clock cycle : "+ globals.ClockValue + " Reg No at index 1 : "+core.getForwardingDestinationRegisterNumber(1));
             
   
          
@@ -421,43 +415,41 @@ public class AllMyStages {
             InstructionBase ins = input.getInstruction();        
             
             if (ins.isNull()) return;
-            //System.out.println("Execute : " + ins.toString());
+            //System.out.print("\t\t\t\t\t" + ins.toString());
             
             GlobalData globals = (GlobalData)core.getGlobalResources();
             
              //shree - Updating DFG sheet
-            File file = new File("DebugSheet_Base.xls");         
-            
-            if(!file.exists()) 
-                System.out.println("EX : Issue in Excel file");
-            else  {
-                try {
-                    Workbook wb = Workbook.getWorkbook(file);
-                    WritableWorkbook wbt = Workbook.createWorkbook(new File("DebugSheet_New.xls"), wb);
-                    
-                    WritableSheet ws = wbt.getSheet(0);
-                    
-                    WritableCell cell;
-                 
-                    Label l = new Label(3, clock+1, ins.toString());
-                    cell = (WritableCell) l;
-                    ws.addCell(cell);
-                    
-                    wbt.write();
-                    wbt.close();
-                    wb.close();
-                                                      
-                    file.delete();
-                    File file1 = new File("DebugSheet_New.xls");
-                    file1.renameTo(file);
-                    Thread.sleep(500);
-                }
-                catch(IOException | IndexOutOfBoundsException | BiffException | WriteException e) {
-                    System.out.println("Excel Error!" + e);
-                    } catch (InterruptedException ex) {
-                    Logger.getLogger(AllMyStages.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+//            File file = new File("DebugSheet_Base.xls");         
+//            
+//            if(!file.exists()) 
+//                System.out.println("EX : Issue in Excel file");
+//            else  {
+//                try {
+//                    Workbook wb = Workbook.getWorkbook(file);
+//                    WritableWorkbook wbt = Workbook.createWorkbook(new File("DebugSheet_New.xls"), wb);
+//                    
+//                    WritableSheet ws = wbt.getSheet(0);
+//                    
+//                    WritableCell cell;
+//                 
+//                    Label l = new Label(3, clock+1, ins.toString());
+//                    cell = (WritableCell) l;
+//                    ws.addCell(cell);
+//                    
+//                    wbt.write();
+//                    wbt.close();
+//                    wb.close();
+//                                                      
+//                    file.delete();
+//                    File file1 = new File("DebugSheet_New.xls");
+//                    file1.renameTo(file);
+//                  //  Thread.sleep(500);
+//                }
+//                catch(IOException | IndexOutOfBoundsException | BiffException | WriteException e) {
+//                    System.out.println("Excel Error!" + e);
+//                    } 
+//            }
             
                   
             int source1 = ins.getSrc1().getValue();
@@ -498,44 +490,44 @@ public class AllMyStages {
         @Override
         public void compute(ExecuteToMemory input, MemoryToWriteback output) {
             InstructionBase ins = input.getInstruction();
+            
             if (ins.isNull()) return;
+          //  System.out.print("\t\t\t\t\t" + ins.toString());
             
             GlobalData globals = (GlobalData)core.getGlobalResources();
             
 
             //shree - Updating DFG sheet
-            File file = new File("DebugSheet_Base.xls");
-            
-            if(!file.exists()) 
-                System.out.println("MMRY : Issue in Excel file");
-            else  {
-                try {
-                    Workbook wb = Workbook.getWorkbook(file);
-                    WritableWorkbook wbt = Workbook.createWorkbook(new File("DebugSheet_New.xls"), wb);
-                    
-                    WritableSheet ws = wbt.getSheet(0);
-                    
-                    WritableCell cell;
-                 
-                    Label l = new Label(4, clock+1, input.getInstruction().toString());
-                    cell = (WritableCell) l;
-                    ws.addCell(cell);
-                    
-                    wbt.write();
-                    wbt.close();
-                    wb.close();
-                                                      
-                    file.delete();
-                    File file1 = new File("DebugSheet_New.xls");
-                    file1.renameTo(file);
-                    Thread.sleep(500);
-                }
-                catch(IOException | IndexOutOfBoundsException | BiffException | WriteException e) {
-                    System.out.println("Excel Error!" + e);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(AllMyStages.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+//            File file = new File("DebugSheet_Base.xls");
+//            
+//            if(!file.exists()) 
+//                System.out.println("MMRY : Issue in Excel file");
+//            else  {
+//                try {
+//                    Workbook wb = Workbook.getWorkbook(file);
+//                    WritableWorkbook wbt = Workbook.createWorkbook(new File("DebugSheet_New.xls"), wb);
+//                    
+//                    WritableSheet ws = wbt.getSheet(0);
+//                    
+//                    WritableCell cell;
+//                 
+//                    Label l = new Label(4, clock+1, input.getInstruction().toString());
+//                    cell = (WritableCell) l;
+//                    ws.addCell(cell);
+//                    
+//                    wbt.write();
+//                    wbt.close();
+//                    wb.close();
+//                                                      
+//                    file.delete();
+//                    File file1 = new File("DebugSheet_New.xls");
+//                    file1.renameTo(file);
+//                   // Thread.sleep(500);
+//                }
+//                catch(IOException | IndexOutOfBoundsException | BiffException | WriteException e) {
+//                    System.out.println("Excel Error!" + e);
+//                } 
+//            }
             
             
             // Access memory...
@@ -583,6 +575,7 @@ public class AllMyStages {
             InstructionBase ins = input.getInstruction();
             if (ins.isNull()) return;
             
+         //   System.out.print("\t\t\t\t\t" + ins.toString());
              GlobalData globals = (GlobalData)core.getGlobalResources();
             
               if (input.getInstruction().getOpcode() == EnumOpcode.HALT) {
@@ -596,38 +589,36 @@ public class AllMyStages {
             //System.out.println("\nWriteBack : " + input.getInstruction().toString());
 
            //shree - Updating DFG sheet
-           File file = new File("DebugSheet_Base.xls");
-            
-            if(!file.exists()) 
-                System.out.println("WB : Issue in Excel file");
-            else  {
-                try {
-                    Workbook wb = Workbook.getWorkbook(file);
-                    WritableWorkbook wbt = Workbook.createWorkbook(new File("DebugSheet_New.xls"), wb);
-                    
-                    WritableSheet ws = wbt.getSheet(0);
-                    
-                    WritableCell cell;
-                 
-                    Label l = new Label(5, clock+1, ins.toString());
-                    cell = (WritableCell) l;
-                    ws.addCell(cell);
-                    
-                    wbt.write();
-                    wbt.close();
-                    wb.close();
-                                                      
-                    file.delete();
-                    File file1 = new File("DebugSheet_New.xls");
-                    file1.renameTo(file);
-                    Thread.sleep(500);
-                }
-                catch(IOException | IndexOutOfBoundsException | BiffException | WriteException e) {
-                    System.out.println("Excel Error!" + e);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(AllMyStages.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+//           File file = new File("DebugSheet_Base.xls");
+//            
+//            if(!file.exists()) 
+//                System.out.println("WB : Issue in Excel file");
+//            else  {
+//                try {
+//                    Workbook wb = Workbook.getWorkbook(file);
+//                    WritableWorkbook wbt = Workbook.createWorkbook(new File("DebugSheet_New.xls"), wb);
+//                    
+//                    WritableSheet ws = wbt.getSheet(0);
+//                    
+//                    WritableCell cell;
+//                 
+//                    Label l = new Label(5, clock+1, ins.toString());
+//                    cell = (WritableCell) l;
+//                    ws.addCell(cell);
+//                    
+//                    wbt.write();
+//                    wbt.close();
+//                    wb.close();
+//                                                      
+//                    file.delete();
+//                    File file1 = new File("DebugSheet_New.xls");
+//                    file1.renameTo(file);
+//                 //   Thread.sleep(500);
+//                }
+//                catch(IOException | IndexOutOfBoundsException | BiffException | WriteException e) {
+//                    System.out.println("Excel Error!" + e);
+//                } 
+//            }
                        
             
             // Write back result to register file
