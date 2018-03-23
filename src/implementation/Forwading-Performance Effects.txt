@@ -1,0 +1,12 @@
+
+Instruction Forwarding - 
+		Forwarding is the approach used to avoid long stalls until the result is written to Registers/Memory. 
+		Instead of creating stalls and wasting clock cycles by keeping stages in idle state, we could move the stalled instructions to the next stage and resolve the dependencies by directly providing the required values to dependent operands.
+		
+		For Example, consider we have instruction I1 : ADD R1 R2 R3 in execute state, and next instruction I2 : ADD R4 R1 R2 is in decode state. As R1 of I2 waiting for the value to be written by I1 in Writeback stage, we have to stall the I2 until I1 writes the value to R1.
+			With Forwarding, instead of stalling I2, we can move I2 to execute stage and use the result computed by ALU in the previous cycle as the input for R1, and proceed further.
+			Hence, we can reduce total execution time needed with this approach.
+			
+			
+Clock Cycles in HW1 : 7315
+Clock Cycles in HW2 : 3933
