@@ -704,7 +704,7 @@ public class AllMyStages {
             
               if (input.getInstruction().getOpcode() == EnumOpcode.HALT) {
                 // Stop the simulation
-                System.out.println("Halting...Total Clocks : " + globals.ClockValue);
+                //System.out.println("Halting...Total Clocks : " + globals.ClockValue);
                 System.exit(0);
               }
             
